@@ -161,7 +161,152 @@ function Register({setScreen,t}){const[form,setForm]=useState({email:"",password
 
 function OTP({email,setScreen,onVerified,t}){const[digits,setDigits]=useState(Array(OTP_LEN).fill(""));const[err,setErr]=useState("");const[loading,setLoading]=useState(false);const[resendCD,setCD]=useState(60);const[shake,setShake]=useState(false);const inputs=useRef([]);useEffect(()=>{const timer=setTimeout(()=>inputs.current[0]?.focus(),400);return()=>clearTimeout(timer);},[]);useEffect(()=>{const iv=setInterval(()=>setCD(c=>Math.max(0,c-1)),1000);return()=>clearInterval(iv);},[]);const verify=async code=>{setLoading(true);setErr("");const{data,ok}=await SB.verifyOTP(email,code);if(ok&&data.access_token){onVerified({token:data.access_token,refresh_token:data.refresh_token,user:data.user});}else{setErr(data.error_description||data.msg||"Codigo invalido ou expirado.");setShake(true);setTimeout(()=>setShake(false),500);setDigits(Array(OTP_LEN).fill(""));setTimeout(()=>inputs.current[0]?.focus(),100);}setLoading(false);};const handleChange=(i,val)=>{const d=val.replace(/\D/g,"").slice(-1);const next=[...digits];next[i]=d;setDigits(next);if(d&&i<OTP_LEN-1)inputs.current[i+1]?.focus();if(next.every(Boolean))verify(next.join(""));};const handleKey=(i,e)=>{if(e.key==="Backspace"&&!digits[i]&&i>0){const next=[...digits];next[i-1]="";setDigits(next);inputs.current[i-1]?.focus();}};const handlePaste=e=>{const paste=e.clipboardData.getData("text").replace(/\D/g,"").slice(0,OTP_LEN);if(paste.length===OTP_LEN){setDigits(paste.split(""));verify(paste);}e.preventDefault();};const resend=async()=>{if(resendCD>0)return;setErr("");setDigits(Array(OTP_LEN).fill(""));await SB.sendOTP(email);setCD(60);setTimeout(()=>inputs.current[0]?.focus(),200);};return <div style={{background:t.bg,minHeight:"100svh",overflowY:"auto",WebkitOverflowScrolling:"touch"}}><Blobs t={t}/><div style={{position:"relative",zIndex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100svh",padding:"24px 20px 60px"}}><div style={{width:"100%",maxWidth:400,animation:"fadeUp 0.5s ease"}}><button onClick={()=>setScreen("login")} style={{background:"none",border:"none",cursor:"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,marginBottom:32,fontSize:14}}><Ico k="back" size={18} color={t.sub}/> Voltar</button><div style={{textAlign:"center",marginBottom:32}}><div style={{width:72,height:72,borderRadius:22,background:t.accentSoft,border:`2px solid ${t.inputBorder}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico k="shield" size={32} color={t.accent}/></div><h2 style={{fontFamily:"'Playfair Display',serif",fontSize:25,fontWeight:700,color:t.text,marginBottom:10}}>Codigo de verificacao</h2><p style={{color:t.sub,fontSize:14,lineHeight:1.65}}>Enviamos um codigo de <strong>{OTP_LEN} digitos</strong> para<br/><strong style={{color:t.accent}}>{email}</strong></p><p style={{color:t.muted,fontSize:12,marginTop:6}}>Verifique sua caixa de entrada e spam</p></div><div style={{display:"flex",gap:5,justifyContent:"center",marginBottom:20,animation:shake?"shakeX 0.4s ease":"none"}}>{digits.map((d,i)=><input key={i} ref={el=>inputs.current[i]=el} type="text" inputMode="numeric" maxLength={1} value={d} onChange={e=>handleChange(i,e.target.value)} onKeyDown={e=>handleKey(i,e)} onPaste={handlePaste} style={{width:38,height:52,borderRadius:12,textAlign:"center",fontSize:20,fontWeight:700,background:t.inputBg,outline:"none",border:`2px solid ${d?t.accent:t.inputBorder}`,color:t.text,transition:"border 0.18s",flexShrink:0}}/>)}</div><ErrBox msg={err} t={t}/><Btn onClick={()=>digits.every(Boolean)&&verify(digits.join(""))} loading={loading} t={t} style={{marginTop:14,marginBottom:16,opacity:digits.every(Boolean)?1:0.45}}><Ico k="check" size={17} color="#fff"/> Verificar e entrar</Btn><div style={{textAlign:"center"}}>{resendCD>0?<p style={{color:t.muted,fontSize:13}}>Reenviar em <strong style={{color:t.accent}}>{resendCD}s</strong></p>:<button onClick={resend} style={{background:"none",border:"none",color:t.accent,fontSize:13,cursor:"pointer",fontWeight:600,textDecoration:"underline"}}>Reenviar codigo</button>}</div><div style={{marginTop:18,padding:"11px 14px",background:t.cardDeep,borderRadius:12,border:`1px solid ${t.border}`}}><p style={{fontSize:12,color:t.muted,lineHeight:1.55}}>Nao recebeu? Verifique o spam. O codigo expira em <strong>10 minutos</strong>.</p></div></div></div></div>;}
 
-function Dashboard({clients,agenda,txs,profile,setScreen,session,t}){const trial=trialInfo(profile);const hoje=agenda.filter(a=>a.date===TS).sort((a,b)=>a.time.localeCompare(b.time));const entradas=txs.filter(x=>x.type==="entrada");const total=entradas.reduce((s,x)=>s+pv(x.value),0);const totalFiado=txs.filter(x=>x.payment==="fiado").reduce((s,x)=>s+pv(x.value),0);const uEmail=session?.user?.email||"";const uName=uEmail.split("@")[0];const dn=TODAY.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});return <div style={{background:t.bg,minHeight:"100vh"}}><Blobs t={t}/><SW><div style={{position:"relative",zIndex:1,padding:"52px 20px 20px"}}>{!trial.paid&&!trial.expired&&trial.daysLeft<=3&&<div onClick={()=>setScreen("settings")} style={{marginBottom:16,borderRadius:14,padding:"12px 16px",background:t.accentSoft,border:`1px solid ${t.inputBorder}`,display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}><Ico k="clock" size={18} color={t.accent}/><div style={{flex:1}}><p style={{fontSize:13,fontWeight:700,color:t.accent}}>Periodo gratuito: {trial.daysLeft}d {trial.hoursLeft}h restantes</p><p style={{fontSize:11,color:t.muted}}>Toque para assinar e continuar</p></div><Ico k="chev" size={16} color={t.muted} style={{transform:"rotate(-90deg)"}}/></div>}<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:22,animation:"fadeUp 0.4s ease"}}><div><p style={{color:t.muted,fontSize:12,marginBottom:4,textTransform:"capitalize"}}>{dn}</p><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:t.text}}>Ola, {uName.charAt(0).toUpperCase()+uName.slice(1)}</h1></div><div style={{width:44,height:44,borderRadius:13,background:t.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"#fff"}}>{uName.slice(0,2).toUpperCase()}</div></div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:22}}>{[{lb:"Faturamento",val:`R$ ${total.toFixed(2)}`,c:t.positive},{lb:"Clientes",val:clients.length,c:t.accent},{lb:"Hoje",val:`${hoje.length} atend.`,c:t.text},{lb:"Fiado",val:`R$ ${totalFiado.toFixed(2)}`,c:totalFiado>0?"#dc2626":t.positive,alert:totalFiado>0}].map((s,i)=><Card key={i} t={t} style={{padding:16,animation:`fadeUp 0.4s ease ${i*60}ms both`,border:s.alert?`1.5px solid rgba(220,38,38,0.35)`:`1px solid ${t.border}`,background:s.alert?"rgba(220,38,38,0.04)":t.cardDeep}}><p style={{fontSize:11,color:s.alert?"#dc2626":t.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>{s.lb}</p><p style={{fontSize:20,fontWeight:700,color:s.c,fontFamily:"'Playfair Display',serif"}}>{s.val}</p>{s.alert&&<p style={{fontSize:10,color:"#dc2626",marginTop:4,fontWeight:600}}>⚠ Receber pendente</p>}</Card>)}</div><div style={{marginBottom:22,animation:"fadeUp 0.4s ease 0.25s both"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><h3 style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:600,color:t.text}}>Agenda de Hoje</h3><button onClick={()=>setScreen("agenda")} style={{background:"none",border:"none",color:t.accent,fontSize:13,fontWeight:600,cursor:"pointer"}}>Ver tudo</button></div>{hoje.length===0?<Card t={t} style={{textAlign:"center",padding:24}}><p style={{color:t.muted,fontSize:14}}>Nenhum agendamento hoje.</p></Card>:hoje.map((apt,i)=><Card key={apt.id} t={t} style={{marginBottom:10,padding:"13px 15px",animation:`slideR 0.35s ease ${i*65}ms both`}}><div style={{display:"flex",alignItems:"center",gap:12}}><div style={{background:t.accentSoft,borderRadius:10,padding:"7px 10px",fontSize:12,fontWeight:700,color:t.accent,minWidth:50,textAlign:"center"}}>{apt.time}</div><div style={{flex:1}}><p style={{fontWeight:600,fontSize:14,color:t.text,marginBottom:2}}>{apt.client_name}</p><p style={{color:t.muted,fontSize:12}}>{apt.service}</p></div></div></Card>)}</div></div></SW></div>;}
+function Dashboard({clients,agenda,txs,profile,setScreen,session,t}){
+  const trial=trialInfo(profile);
+  const hoje=agenda.filter(a=>a.date===TS).sort((a,b)=>a.time.localeCompare(b.time));
+  const entradas=txs.filter(x=>x.type==="entrada");
+  const despesas=txs.filter(x=>x.type==="saida");
+  const total=entradas.reduce((s,x)=>s+pv(x.value),0);
+  const totalD=despesas.reduce((s,x)=>s+pv(x.value),0);
+  const lucro=total-totalD;
+  const totalFiado=txs.filter(x=>x.payment==="fiado").reduce((s,x)=>s+pv(x.value),0);
+  const uEmail=session?.user?.email||"";
+  const uName=uEmail.split("@")[0];
+  const hora=TODAY.getHours();
+  const saudacao=hora<12?"Bom dia":hora<18?"Boa tarde":"Boa noite";
+  const dn=TODAY.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+  const last7=Array.from({length:7},(_,i)=>{const d=new Date(TODAY);d.setDate(d.getDate()-6+i);const ds=fmt(d);const v=txs.filter(x=>x.date===ds&&x.type==="entrada").reduce((s,x)=>s+pv(x.value),0);return{ds,v,label:["D","S","T","Q","Q","S","S"][d.getDay()]};});
+  const maxV=Math.max(...last7.map(d=>d.v),1);
+  const nowStr=String(TODAY.getHours()).padStart(2,"0")+":"+String(TODAY.getMinutes()).padStart(2,"0");
+  const proxApt=hoje.find(a=>a.time>=nowStr)||hoje[0];
+  return(
+    <div style={{background:t.bg,minHeight:"100vh"}}>
+      <Blobs t={t}/>
+      <SW>
+        <div style={{position:"relative",zIndex:1,padding:"0 0 20px"}}>
+          {/* HERO HEADER */}
+          <div style={{background:t.grad,padding:"52px 22px 28px",borderRadius:"0 0 32px 32px",marginBottom:20,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(109,40,217,0.3)"}}>
+            <div style={{position:"absolute",top:-40,right:-40,width:150,height:150,borderRadius:"50%",background:"rgba(255,255,255,0.07)"}}/>
+            <div style={{position:"absolute",bottom:-30,left:-20,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
+            {!trial.paid&&!trial.expired&&trial.daysLeft<=3&&(
+              <div onClick={()=>setScreen("settings")} style={{marginBottom:14,borderRadius:12,padding:"8px 14px",background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",display:"flex",alignItems:"center",gap:8,cursor:"pointer"}}>
+                <Ico k="clock" size={15} color="#fff"/><p style={{fontSize:12,color:"#fff",fontWeight:700}}>Teste expira em {trial.daysLeft}d {trial.hoursLeft}h — Assinar</p>
+              </div>
+            )}
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
+              <div>
+                <p style={{color:"rgba(255,255,255,0.65)",fontSize:12,marginBottom:2,textTransform:"capitalize"}}>{dn}</p>
+                <p style={{color:"rgba(255,255,255,0.75)",fontSize:13}}>{saudacao} 👋</p>
+                <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,color:"#fff",lineHeight:1.2}}>{uName.charAt(0).toUpperCase()+uName.slice(1)}</h1>
+              </div>
+              <div style={{width:46,height:46,borderRadius:14,background:"rgba(255,255,255,0.2)",border:"2px solid rgba(255,255,255,0.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff"}}>{uName.slice(0,2).toUpperCase()}</div>
+            </div>
+            <div style={{background:"rgba(255,255,255,0.12)",borderRadius:18,padding:"16px 18px",border:"1px solid rgba(255,255,255,0.2)",backdropFilter:"blur(10px)"}}>
+              <p style={{color:"rgba(255,255,255,0.65)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Faturamento total</p>
+              <p style={{fontFamily:"'Playfair Display',serif",fontSize:34,fontWeight:700,color:"#fff",lineHeight:1,marginBottom:8}}>R$ {total.toFixed(2)}</p>
+              <div style={{display:"flex",gap:16}}>
+                <div style={{background:"rgba(255,255,255,0.1)",borderRadius:8,padding:"5px 10px"}}><p style={{fontSize:10,color:"rgba(255,255,255,0.6)"}}>Lucro</p><p style={{fontSize:13,fontWeight:700,color:"#fff"}}>R$ {lucro.toFixed(2)}</p></div>
+                <div style={{background:"rgba(255,255,255,0.1)",borderRadius:8,padding:"5px 10px"}}><p style={{fontSize:10,color:"rgba(255,255,255,0.6)"}}>Despesas</p><p style={{fontSize:13,fontWeight:700,color:"#fff"}}>R$ {totalD.toFixed(2)}</p></div>
+                <div style={{background:totalFiado>0?"rgba(255,100,100,0.25)":"rgba(255,255,255,0.1)",borderRadius:8,padding:"5px 10px",border:totalFiado>0?"1px solid rgba(255,100,100,0.5)":"none"}}><p style={{fontSize:10,color:totalFiado>0?"#ffb3b3":"rgba(255,255,255,0.6)"}}>Fiado</p><p style={{fontSize:13,fontWeight:700,color:totalFiado>0?"#ffb3b3":"#fff"}}>R$ {totalFiado.toFixed(2)}</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{padding:"0 18px"}}>
+            {/* CARDS RAPIDOS */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:18}}>
+              {[
+                {lb:"Clientes",val:clients.length,icon:"👩",c:t.accent,onClick:()=>setScreen("clients")},
+                {lb:"Hoje",val:hoje.length,icon:"📅",c:"#2563eb",onClick:()=>setScreen("agenda")},
+                {lb:"Fiado",val:`R$${totalFiado.toFixed(0)}`,icon:totalFiado>0?"⚠️":"✅",c:totalFiado>0?"#dc2626":t.positive,alert:totalFiado>0,onClick:()=>setScreen("finance")},
+              ].map((s,i)=>(
+                <Card key={i} t={t} onClick={s.onClick} style={{padding:"13px 10px",textAlign:"center",animation:`fadeUp 0.4s ease ${i*60}ms both`,border:s.alert?"1.5px solid rgba(220,38,38,0.4)":`1px solid ${t.border}`,background:s.alert?"rgba(220,38,38,0.04)":t.cardDeep,cursor:"pointer"}}>
+                  <span style={{fontSize:22}}>{s.icon}</span>
+                  <p style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:s.c,marginTop:5,lineHeight:1}}>{s.val}</p>
+                  <p style={{fontSize:10,color:s.alert?"#dc2626":t.muted,fontWeight:600,marginTop:4,textTransform:"uppercase",letterSpacing:0.4}}>{s.lb}</p>
+                </Card>
+              ))}
+            </div>
+
+            {/* GRAFICO SEMANAL */}
+            <Card t={t} style={{marginBottom:18,padding:"16px 14px",animation:"fadeUp 0.4s ease 0.15s both"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <p style={{fontSize:13,fontWeight:700,color:t.text}}>Receita — últimos 7 dias</p>
+                <button onClick={()=>setScreen("finance")} style={{background:"none",border:"none",color:t.accent,fontSize:12,fontWeight:600,cursor:"pointer"}}>Financas →</button>
+              </div>
+              <div style={{display:"flex",alignItems:"flex-end",gap:5,height:60}}>
+                {last7.map((d,i)=>(
+                  <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
+                    <div title={`R$ ${d.v}`} style={{width:"100%",borderRadius:6,background:d.ds===TS?t.grad:d.v>0?t.accentSoft:"rgba(150,150,150,0.12)",height:d.v>0?`${Math.max(8,(d.v/maxV)*50)}px`:"6px",transition:"height 0.6s ease",boxShadow:d.ds===TS?"0 2px 8px rgba(109,40,217,0.35)":"none"}}/>
+                    <span style={{fontSize:9,color:d.ds===TS?t.accent:t.muted,fontWeight:d.ds===TS?700:400}}>{d.label}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* PROXIMO ATENDIMENTO */}
+            {proxApt&&(
+              <div onClick={()=>setScreen("agenda")} style={{marginBottom:18,padding:"14px 16px",borderRadius:18,background:t.grad,cursor:"pointer",animation:"fadeUp 0.4s ease 0.2s both",boxShadow:"0 6px 24px rgba(109,40,217,0.28)"}}>
+                <p style={{fontSize:10,color:"rgba(255,255,255,0.65)",fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>🕐 Próximo atendimento</p>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{background:"rgba(255,255,255,0.2)",borderRadius:12,padding:"8px 12px",fontSize:13,fontWeight:700,color:"#fff",border:"1px solid rgba(255,255,255,0.3)"}}>{proxApt.time}</div>
+                  <div style={{flex:1}}>
+                    <p style={{fontWeight:700,fontSize:15,color:"#fff"}}>{proxApt.client_name}</p>
+                    <p style={{fontSize:12,color:"rgba(255,255,255,0.7)"}}>{proxApt.service}</p>
+                  </div>
+                  <Ico k="chev" size={18} color="rgba(255,255,255,0.8)" style={{transform:"rotate(-90deg)"}}/>
+                </div>
+              </div>
+            )}
+
+            {/* AGENDA DO DIA */}
+            <div style={{marginBottom:18,animation:"fadeUp 0.4s ease 0.25s both"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:600,color:t.text}}>Agenda de Hoje</h3>
+                <button onClick={()=>setScreen("agenda")} style={{background:"none",border:"none",color:t.accent,fontSize:13,fontWeight:600,cursor:"pointer"}}>Ver tudo</button>
+              </div>
+              {hoje.length===0
+                ?<Card t={t} style={{textAlign:"center",padding:28,border:`1.5px dashed ${t.inputBorder}`}}>
+                  <p style={{fontSize:26,marginBottom:8}}>📅</p>
+                  <p style={{color:t.muted,fontSize:14,marginBottom:14}}>Nenhum agendamento hoje.</p>
+                  <button onClick={()=>setScreen("agenda")} style={{background:t.grad,border:"none",borderRadius:12,padding:"10px 20px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:"0 4px 14px rgba(109,40,217,0.3)"}}>+ Agendar agora</button>
+                </Card>
+                :hoje.map((apt,i)=>(
+                  <Card key={apt.id} t={t} style={{marginBottom:10,padding:"13px 15px",animation:`slideR 0.35s ease ${i*65}ms both`}}>
+                    <div style={{display:"flex",alignItems:"center",gap:12}}>
+                      <div style={{background:t.accentSoft,borderRadius:10,padding:"7px 10px",fontSize:12,fontWeight:700,color:t.accent,minWidth:50,textAlign:"center"}}>{apt.time}</div>
+                      <div style={{flex:1}}>
+                        <p style={{fontWeight:600,fontSize:14,color:t.text,marginBottom:2}}>{apt.client_name}</p>
+                        <p style={{color:t.muted,fontSize:12}}>{apt.service}</p>
+                      </div>
+                      <div style={{width:8,height:8,borderRadius:"50%",background:"#059669"}}/>
+                    </div>
+                  </Card>
+                ))
+              }
+            </div>
+
+            {/* ATALHOS RAPIDOS */}
+            <p style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>Acesso rápido</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              {[
+                {lb:"Nova entrada",icon:"💰",color:"#059669",bg:"rgba(5,150,105,0.08)",border:"rgba(5,150,105,0.2)",action:()=>setScreen("finance")},
+                {lb:"Agendar cliente",icon:"📅",color:"#2563eb",bg:"rgba(37,99,235,0.08)",border:"rgba(37,99,235,0.2)",action:()=>setScreen("agenda")},
+                {lb:"Cadastrar cliente",icon:"👩",color:"#db2777",bg:"rgba(219,39,119,0.08)",border:"rgba(219,39,119,0.2)",action:()=>setScreen("clients")},
+                {lb:"Configurações",icon:"⚙️",color:t.accent,bg:t.accentSoft,border:t.inputBorder,action:()=>setScreen("settings")},
+              ].map((s,i)=>(
+                <button key={i} onClick={s.action} style={{padding:"14px 12px",borderRadius:14,background:s.bg,border:`1.5px solid ${s.border}`,cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:10,animation:`slideR 0.3s ease ${i*50}ms both`,width:"100%"}}>
+                  <span style={{fontSize:22}}>{s.icon}</span>
+                  <p style={{fontSize:13,fontWeight:700,color:s.color,lineHeight:1.2}}>{s.lb}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </SW>
+    </div>
+  );
+}
 
 function AddApptModal({onClose,onAdd,clients,svcs,t}){const[form,setForm]=useState({clientName:"",clientPhone:"",service:"",date:TS,time:"09:00"});const[errors,setErrors]=useState({});const[saving,setSaving]=useState(false);const[ok,setOk]=useState(false);const[showSug,setShowSug]=useState(false);const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));const sug=clients.filter(c=>form.clientName&&c.name.toLowerCase().includes(form.clientName.toLowerCase())&&c.name!==form.clientName);const handle=async()=>{const e={};if(!form.clientName.trim())e.clientName="Nome obrigatorio";if(!form.service)e.service="Selecione um servico";if(Object.keys(e).length){setErrors(e);return;}setSaving(true);await onAdd({date:form.date,time:form.time,client_name:form.clientName,client_phone:form.clientPhone,service:form.service,status:"confirmed"});setOk(true);setSaving(false);setTimeout(onClose,800);};return <Sheet onClose={onClose} title="Novo Agendamento" t={t} success={ok} successNode={<OK title="Agendado!" sub={`${form.clientName} — ${form.date}`} t={t}/>}><div style={{display:"flex",flexDirection:"column",gap:14}}><div style={{position:"relative"}}><Lbl t={t}>Nome do cliente *</Lbl><Inp value={form.clientName} onChange={e=>{upd("clientName")(e);setShowSug(true);}} placeholder="Nome ou novo cliente" error={errors.clientName} t={t}/>{showSug&&sug.length>0&&<div style={{position:"absolute",top:"calc(100% + 2px)",left:0,right:0,zIndex:20,background:t.sheetBg,border:`1px solid ${t.border}`,borderRadius:12,overflow:"hidden",boxShadow:t.shadow}}>{sug.slice(0,4).map(c=><div key={c.id} onClick={()=>{setForm(p=>({...p,clientName:c.name,clientPhone:c.phone||""}));setShowSug(false);}} style={{padding:"10px 14px",cursor:"pointer",borderBottom:`1px solid ${t.divider}`,display:"flex",alignItems:"center",gap:10}}><div style={{width:28,height:28,borderRadius:8,background:c.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#fff"}}>{ini(c.name)}</div><div><p style={{fontSize:13,fontWeight:600,color:t.text}}>{c.name}</p>{c.phone&&<p style={{fontSize:11,color:t.muted}}>{c.phone}</p>}</div></div>)}</div>}</div><div><Lbl t={t}>Telefone (opcional)</Lbl><Inp value={form.clientPhone} onChange={upd("clientPhone")} placeholder="(11) 99999-9999" type="tel" t={t}/></div><div><Lbl t={t}>Servico *</Lbl><select value={form.service} onChange={upd("service")} style={{width:"100%",borderRadius:13,padding:"12px 14px",fontSize:15,color:t.text,background:t.inputBg,border:`1.5px solid ${errors.service?"#dc2626":t.inputBorder}`,outline:"none",appearance:"none"}}><option value="">Selecione...</option>{svcs.map(s=><option key={s} value={s}>{s}</option>)}</select>{errors.service&&<p style={{color:"#dc2626",fontSize:12,marginTop:4}}>{errors.service}</p>}</div><div style={{display:"flex",gap:12}}><div style={{flex:1}}><Lbl t={t}>Data</Lbl><input type="date" value={form.date.split("/").reverse().join("-")} onChange={e=>{const[y,m,d]=e.target.value.split("-");setForm(p=>({...p,date:`${d}/${m}/${y}`}));}} style={{width:"100%",borderRadius:13,padding:"12px 11px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/></div><div style={{flex:1}}><Lbl t={t}>Horario</Lbl><input type="time" value={form.time} onChange={upd("time")} style={{width:"100%",borderRadius:13,padding:"12px 11px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/></div></div><Btn onClick={handle} loading={saving} t={t}>Confirmar Agendamento</Btn></div></Sheet>;}
 
@@ -372,19 +517,20 @@ export default function App(){
 
   const loadData=async sess=>{
     setScreen("loading");
-    // Tenta renovar token se expirar (token Supabase dura 1h)
+    // SEMPRE tenta renovar o token ao carregar (token Supabase dura ~1h)
     let activeToken=sess.token;
     if(sess.refresh_token){
-      const tokenAge=Date.now()-(sess.tokenSaved||0);
-      if(tokenAge>55*60*1000){ // renovar se passou 55 minutos
+      try{
         const{data,ok}=await SB.refreshToken(sess.refresh_token);
         if(ok&&data.access_token){
           const renewed={...sess,token:data.access_token,refresh_token:data.refresh_token||sess.refresh_token,tokenSaved:Date.now()};
           ssSave(renewed);setSession(renewed);activeToken=data.access_token;
         }
-      }
+      }catch(e){}
     }
     const[pRows,cRows,aRows,txRows]=await Promise.all([DB.getProfile(activeToken),DB.getClients(activeToken),DB.getAgenda(activeToken),DB.getTxs(activeToken)]);
+    // Se erro de autenticação, redireciona para login
+    if(pRows&&pRows.code==="PGRST301"){ssClear();setScreen("welcome");return;}
     let prof=Array.isArray(pRows)&&pRows.length>0?pRows[0]:null;
     if(!prof&&pRows!==null){ // só cria se pRows voltou (sem erro de rede)
       const created=await DB.upsertProfile(activeToken,{trial_start:new Date().toISOString(),subscription_status:"trial",onboarding_done:false,services:DEF_SVCS});
