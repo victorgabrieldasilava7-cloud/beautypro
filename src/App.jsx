@@ -103,7 +103,7 @@ function Lbl({children,t}){return <label style={{fontSize:11,fontWeight:700,colo
 function Btn({children,onClick,loading=false,variant="primary",style={},t,disabled=false}){const[p,setP]=useState(false);const S={primary:{bg:t.grad,color:"#fff",border:"transparent"},ghost:{bg:t.cardDeep,color:t.accent,border:t.inputBorder},danger:{bg:"rgba(220,38,38,0.08)",color:t.negative,border:"rgba(220,38,38,0.2)"},green:{bg:"rgba(5,150,105,0.12)",color:t.positive,border:"rgba(5,150,105,0.35)"}};const s=S[variant]||S.primary;return <button onClick={onClick} disabled={loading||disabled} onPointerDown={()=>setP(true)} onPointerUp={()=>setP(false)} onPointerLeave={()=>setP(false)} style={{width:"100%",background:s.bg,color:s.color,border:`1.5px solid ${s.border}`,borderRadius:14,padding:"15px 20px",fontSize:15,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"transform 0.15s,opacity 0.15s",transform:p?"scale(0.97)":"scale(1)",opacity:(loading||disabled)?0.6:1,...style}}>{loading?<span style={{width:18,height:18,borderRadius:"50%",border:"2px solid rgba(255,255,255,0.3)",borderTopColor:"#fff",animation:"spin 0.7s linear infinite",display:"inline-block"}}/>:children}</button>;}
 function Toggle({on,onChange}){return <div onClick={onChange} style={{width:46,height:26,borderRadius:13,cursor:"pointer",flexShrink:0,background:on?"linear-gradient(135deg,#7c3aed,#db2777)":"rgba(150,150,150,0.25)",position:"relative",transition:"background 0.3s"}}><div style={{position:"absolute",top:3,left:on?21:3,width:20,height:20,borderRadius:"50%",background:"#fff",transition:"left 0.3s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></div>;}
 function Fab({onClick,t}){const[p,setP]=useState(false);return <button onPointerDown={()=>setP(true)} onPointerUp={()=>setP(false)} onPointerLeave={()=>setP(false)} onClick={onClick} style={{position:"fixed",bottom:96,right:20,width:52,height:52,borderRadius:"50%",background:t.grad,border:"none",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 22px rgba(109,40,217,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,transition:"transform 0.15s",transform:p?"scale(0.9)":"scale(1)"}}>+</button>;}
-function Nav({active,setScreen,t}){const tabs=[{id:"dashboard",label:"Inicio",k:"home"},{id:"agenda",label:"Agenda",k:"cal"},{id:"clients",label:"Clientes",k:"user"},{id:"finance",label:"Financas",k:"wallet"},{id:"settings",label:"Config",k:"gear"}];return <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:t.navBg,backdropFilter:t.blur,WebkitBackdropFilter:t.blur,borderTop:`1px solid ${t.border}`,borderRadius:"18px 18px 0 0",display:"flex",padding:"8px 0 20px"}}>{tabs.map(tab=>{const on=active===tab.id;return <button key={tab.id} onClick={()=>setScreen(tab.id)} style={{flex:1,border:"none",background:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"6px 0",transition:"all 0.2s",transform:on?"scale(1.08)":"scale(1)"}}><Ico k={tab.k} size={20} color={on?t.accent:t.muted}/><span style={{fontSize:9.5,fontWeight:on?700:400,color:on?t.accent:t.muted}}>{tab.label}</span>{on&&<div style={{width:3,height:3,borderRadius:"50%",background:t.accent}}/>}</button>;})}</div>;}
+function Nav({active,setScreen,t}){const tabs=[{id:"dashboard",label:"Inicio",k:"home"},{id:"agenda",label:"Agenda",k:"cal"},{id:"clients",label:"Clientes",k:"user"},{id:"finance",label:"Financas",k:"wallet"},{id:"settings",label:"Config",k:"gear"}];return <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,zIndex:100,background:t.navBg,backdropFilter:t.blur,WebkitBackdropFilter:t.blur,borderTop:`1px solid ${t.border}`,display:"flex",padding:"10px 0 22px"}}>{tabs.map(tab=>{const on=active===tab.id;return <button key={tab.id} onClick={()=>setScreen(tab.id)} style={{flex:1,border:"none",background:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:4,padding:"4px 0",transition:"all 0.2s"}}><div style={{width:36,height:36,borderRadius:11,background:on?t.accentSoft:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",transform:on?"scale(1.08)":"scale(1)"}}><Ico k={tab.k} size={19} color={on?t.accent:t.muted}/></div><span style={{fontSize:9.5,fontWeight:on?700:500,color:on?t.accent:t.muted,letterSpacing:0.2}}>{tab.label}</span></button>;})}</div>;}
 function SW({children}){return <div style={{animation:"scaleIn 0.25s ease forwards",paddingBottom:90,minHeight:"100vh",maxWidth:430,margin:"0 auto"}}>{children}</div>;}
 function Sheet({onClose,title,children,t,success,successNode}){return <><div onClick={onClose} style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.5)",backdropFilter:"blur(6px)",WebkitBackdropFilter:"blur(6px)",zIndex:200,animation:"fadeIn 0.2s"}}/><div style={{position:"fixed",bottom:0,left:0,right:0,margin:"0 auto",width:"100%",maxWidth:430,zIndex:201,background:t.sheetBg,borderRadius:"26px 26px 0 0",padding:"20px 22px 46px",boxShadow:"0 -6px 40px rgba(0,0,0,0.2)",border:`1px solid ${t.border}`,overflowY:"auto",maxHeight:"92vh",animation:"sheetUp 0.3s ease forwards"}}><div style={{width:36,height:4,borderRadius:2,background:t.divider,margin:"0 auto 18px"}}/>{success?successNode:<><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}><h2 style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700,color:t.text}}>{title}</h2><button onClick={onClose} style={{width:30,height:30,borderRadius:"50%",background:t.divider,border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico k="x" size={14} color={t.sub}/></button></div>{children}</>}</div></>;} 
 function OK({title,sub,t}){return <div style={{textAlign:"center",padding:"28px 0",animation:"popIn 0.45s ease forwards",color:t.text}}><div style={{width:56,height:56,borderRadius:"50%",background:t.accentSoft,border:`2px solid ${t.accent}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico k="check" size={24} color={t.accent}/></div><h3 style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:700,marginBottom:6}}>{title}</h3>{sub&&<p style={{fontSize:14,color:t.sub,lineHeight:1.5}}>{sub}</p>}</div>;}
@@ -308,6 +308,23 @@ function Dashboard({clients,agenda,txs,profile,setScreen,session,t}){
   );
 }
 
+function SectionHero({title,sub,emoji,t,right}){
+  return(
+    <div style={{background:t.grad,padding:"52px 22px 24px",borderRadius:"0 0 32px 32px",marginBottom:20,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(109,40,217,0.25)"}}>
+      <div style={{position:"absolute",top:-50,right:-50,width:160,height:160,borderRadius:"50%",background:"rgba(255,255,255,0.07)"}}/>
+      <div style={{position:"absolute",bottom:-30,left:-20,width:110,height:110,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative",zIndex:1}}>
+        <div>
+          <div style={{fontSize:28,marginBottom:6}}>{emoji}</div>
+          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:"#fff",lineHeight:1.15,marginBottom:4}}>{title}</h1>
+          {sub&&<p style={{color:"rgba(255,255,255,0.7)",fontSize:13}}>{sub}</p>}
+        </div>
+        {right}
+      </div>
+    </div>
+  );
+}
+
 function AddApptModal({onClose,onAdd,clients,svcs,t}){const[form,setForm]=useState({clientName:"",clientPhone:"",service:"",date:TS,time:"09:00"});const[errors,setErrors]=useState({});const[saving,setSaving]=useState(false);const[ok,setOk]=useState(false);const[showSug,setShowSug]=useState(false);const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));const sug=clients.filter(c=>form.clientName&&c.name.toLowerCase().includes(form.clientName.toLowerCase())&&c.name!==form.clientName);const handle=async()=>{const e={};if(!form.clientName.trim())e.clientName="Nome obrigatorio";if(!form.service)e.service="Selecione um servico";if(Object.keys(e).length){setErrors(e);return;}setSaving(true);await onAdd({date:form.date,time:form.time,client_name:form.clientName,client_phone:form.clientPhone,service:form.service,status:"confirmed"});setOk(true);setSaving(false);setTimeout(onClose,800);};return <Sheet onClose={onClose} title="Novo Agendamento" t={t} success={ok} successNode={<OK title="Agendado!" sub={`${form.clientName} — ${form.date}`} t={t}/>}><div style={{display:"flex",flexDirection:"column",gap:14}}><div style={{position:"relative"}}><Lbl t={t}>Nome do cliente *</Lbl><Inp value={form.clientName} onChange={e=>{upd("clientName")(e);setShowSug(true);}} placeholder="Nome ou novo cliente" error={errors.clientName} t={t}/>{showSug&&sug.length>0&&<div style={{position:"absolute",top:"calc(100% + 2px)",left:0,right:0,zIndex:20,background:t.sheetBg,border:`1px solid ${t.border}`,borderRadius:12,overflow:"hidden",boxShadow:t.shadow}}>{sug.slice(0,4).map(c=><div key={c.id} onClick={()=>{setForm(p=>({...p,clientName:c.name,clientPhone:c.phone||""}));setShowSug(false);}} style={{padding:"10px 14px",cursor:"pointer",borderBottom:`1px solid ${t.divider}`,display:"flex",alignItems:"center",gap:10}}><div style={{width:28,height:28,borderRadius:8,background:c.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#fff"}}>{ini(c.name)}</div><div><p style={{fontSize:13,fontWeight:600,color:t.text}}>{c.name}</p>{c.phone&&<p style={{fontSize:11,color:t.muted}}>{c.phone}</p>}</div></div>)}</div>}</div><div><Lbl t={t}>Telefone (opcional)</Lbl><Inp value={form.clientPhone} onChange={upd("clientPhone")} placeholder="(11) 99999-9999" type="tel" t={t}/></div><div><Lbl t={t}>Servico *</Lbl><select value={form.service} onChange={upd("service")} style={{width:"100%",borderRadius:13,padding:"12px 14px",fontSize:15,color:t.text,background:t.inputBg,border:`1.5px solid ${errors.service?"#dc2626":t.inputBorder}`,outline:"none",appearance:"none"}}><option value="">Selecione...</option>{svcs.map(s=><option key={s} value={s}>{s}</option>)}</select>{errors.service&&<p style={{color:"#dc2626",fontSize:12,marginTop:4}}>{errors.service}</p>}</div><div style={{display:"flex",gap:12}}><div style={{flex:1}}><Lbl t={t}>Data</Lbl><input type="date" value={form.date.split("/").reverse().join("-")} onChange={e=>{const[y,m,d]=e.target.value.split("-");setForm(p=>({...p,date:`${d}/${m}/${y}`}));}} style={{width:"100%",borderRadius:13,padding:"12px 11px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/></div><div style={{flex:1}}><Lbl t={t}>Horario</Lbl><input type="time" value={form.time} onChange={upd("time")} style={{width:"100%",borderRadius:13,padding:"12px 11px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/></div></div><Btn onClick={handle} loading={saving} t={t}>Confirmar Agendamento</Btn></div></Sheet>;}
 
 
@@ -343,25 +360,229 @@ function CompleteApptSheet({apt,svcs,clients,onDone,onClose,t}){
   );
 }
 
-function AgendaScreen({agenda,clients,svcs,onAdd,onDelete,onComplete,t}){const[showModal,setShowModal]=useState(false);const[selDay,setSelDay]=useState(TS);const[completeApt,setCompleteApt]=useState(null);const days=Array.from({length:7},(_,i)=>{const d=new Date(TODAY);d.setDate(d.getDate()-3+i);return{date:fmt(d),label:["Dom","Seg","Ter","Qua","Qui","Sex","Sab"][d.getDay()],num:d.getDate()};});const dayApts=agenda.filter(a=>a.date===selDay).sort((a,b)=>a.time.localeCompare(b.time));return <div style={{background:t.bg,minHeight:"100vh"}}><Blobs t={t}/><SW><div style={{position:"relative",zIndex:1,padding:"52px 20px 20px"}}><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:t.text,marginBottom:20,animation:"fadeUp 0.4s ease"}}>Agenda</h1><Card t={t} style={{marginBottom:18,padding:"12px 8px",animation:"fadeUp 0.4s ease 0.1s both"}}><div style={{display:"flex",justifyContent:"space-between"}}>{days.map(d=>{const on=d.date===selDay,isT=d.date===TS,has=agenda.some(a=>a.date===d.date);return <div key={d.date} onClick={()=>setSelDay(d.date)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,padding:"7px 5px",borderRadius:11,cursor:"pointer",flex:1,background:on?t.grad:"transparent",transition:"all 0.18s"}}><span style={{fontSize:9.5,fontWeight:700,color:on?"rgba(255,255,255,0.75)":isT?t.accent:t.muted}}>{d.label}</span><span style={{fontSize:15,fontWeight:700,color:on?"#fff":t.text}}>{d.num}</span>{has&&<div style={{width:3,height:3,borderRadius:"50%",background:on?"rgba(255,255,255,0.6)":t.accent}}/>}</div>;})}</div></Card><p style={{color:t.muted,fontSize:12,marginBottom:12,fontWeight:500}}>{selDay===TS?"Hoje — ":""}{selDay} · {dayApts.length} agendamento{dayApts.length!==1?"s":""}</p>{dayApts.length===0?<Card t={t} style={{textAlign:"center",padding:32}}><p style={{color:t.muted,fontSize:14,lineHeight:1.6}}>Nenhum agendamento.<br/>Toque em + para adicionar.</p></Card>:dayApts.map((apt,i)=><Card key={apt.id} t={t} style={{marginBottom:10,padding:"13px 15px",animation:`slideR 0.35s ease ${i*65}ms both`}}><div style={{display:"flex",alignItems:"center",gap:12}}><div style={{background:t.accentSoft,borderRadius:10,padding:"7px 10px",fontSize:12,fontWeight:700,color:t.accent,minWidth:50,textAlign:"center"}}>{apt.time}</div><div style={{flex:1}}><p style={{fontWeight:600,fontSize:14,color:t.text,marginBottom:2}}>{apt.client_name}</p><p style={{color:t.muted,fontSize:12}}>{apt.service}</p></div><div style={{display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end",flexShrink:0}}>
-                    <button onClick={()=>setCompleteApt(apt)} style={{background:"rgba(5,150,105,0.1)",border:"1px solid rgba(5,150,105,0.3)",borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:10,fontWeight:700,color:"#059669",display:"flex",alignItems:"center",gap:3}}><Ico k="check" size={10} color="#059669"/> Concluir</button>
-                    <button onClick={()=>onDelete(apt.id)} style={{background:"none",border:"none",cursor:"pointer",padding:2,display:"flex",alignItems:"center",gap:3,fontSize:10,color:t.muted}}><Ico k="trash" size={12} color={t.muted}/></button>
-                  </div></div></Card>)}</div></SW><Fab onClick={()=>setShowModal(true)} t={t}/>
-{showModal&&<AddApptModal onClose={()=>setShowModal(false)} onAdd={onAdd} clients={clients} svcs={svcs} t={t}/>}
-{completeApt&&<CompleteApptSheet apt={completeApt} svcs={svcs} clients={clients} onDone={(tx)=>{onComplete(completeApt,tx);setCompleteApt(null);}} onClose={()=>setCompleteApt(null)} t={t}/>}
-</div>;}
+function AgendaScreen({agenda,clients,svcs,onAdd,onDelete,onComplete,t}){
+  const[showModal,setShowModal]=useState(false);
+  const[selDay,setSelDay]=useState(TS);
+  const[completeApt,setCompleteApt]=useState(null);
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(TODAY);d.setDate(d.getDate()-3+i);return{date:fmt(d),label:["D","S","T","Q","Q","S","S"][d.getDay()],num:d.getDate()};});
+  const dayApts=agenda.filter(a=>a.date===selDay).sort((a,b)=>a.time.localeCompare(b.time));
+  const totalHoje=agenda.filter(a=>a.date===TS).length;
+  return(
+    <div style={{background:t.bg,minHeight:"100vh"}}>
+      <Blobs t={t}/>
+      <SW>
+        <div style={{position:"relative",zIndex:1}}>
+          <SectionHero title="Agenda" sub={`${totalHoje} atendimento${totalHoje!==1?"s":""} hoje`} emoji="📅" t={t}/>
+          <div style={{padding:"0 18px"}}>
+            <Card t={t} style={{marginBottom:18,padding:"14px 10px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",gap:4}}>
+                {days.map(d=>{const on=d.date===selDay,isT=d.date===TS,has=agenda.some(a=>a.date===d.date);
+                  return(
+                    <div key={d.date} onClick={()=>setSelDay(d.date)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,padding:"8px 6px",borderRadius:13,cursor:"pointer",flex:1,background:on?t.grad:"transparent",transition:"all 0.18s"}}>
+                      <span style={{fontSize:10,fontWeight:700,color:on?"rgba(255,255,255,0.75)":isT?t.accent:t.muted,textTransform:"uppercase"}}>{d.label}</span>
+                      <span style={{fontSize:16,fontWeight:700,color:on?"#fff":t.text}}>{d.num}</span>
+                      {has&&<div style={{width:4,height:4,borderRadius:"50%",background:on?"rgba(255,255,255,0.7)":t.accent}}/>}
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+              <p style={{color:t.muted,fontSize:13,fontWeight:600}}>{selDay===TS?"Hoje · ":""}{selDay}</p>
+              <span style={{fontSize:12,color:t.accent,fontWeight:700,background:t.accentSoft,padding:"4px 10px",borderRadius:20}}>{dayApts.length} agend.</span>
+            </div>
+            {dayApts.length===0
+              ?<Card t={t} style={{textAlign:"center",padding:36,border:`1.5px dashed ${t.inputBorder}`}}>
+                <p style={{fontSize:30,marginBottom:10}}>📅</p>
+                <p style={{color:t.muted,fontSize:14}}>Nenhum agendamento.</p>
+                <p style={{color:t.muted,fontSize:12,marginTop:4}}>Toque em + para adicionar.</p>
+              </Card>
+              :dayApts.map((apt,i)=>(
+                <Card key={apt.id} t={t} style={{marginBottom:10,padding:"14px 16px",animation:`slideR 0.3s ease ${i*55}ms both`}}>
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <div style={{background:t.grad,borderRadius:12,padding:"8px 11px",fontSize:12,fontWeight:700,color:"#fff",minWidth:54,textAlign:"center",boxShadow:"0 3px 10px rgba(109,40,217,0.28)"}}>{apt.time}</div>
+                    <div style={{flex:1}}>
+                      <p style={{fontWeight:700,fontSize:15,color:t.text,marginBottom:2}}>{apt.client_name}</p>
+                      <p style={{color:t.muted,fontSize:12}}>{apt.service}</p>
+                    </div>
+                    <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"flex-end",flexShrink:0}}>
+                      <button onClick={()=>setCompleteApt(apt)} style={{background:"rgba(5,150,105,0.1)",border:"1px solid rgba(5,150,105,0.3)",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:10,fontWeight:700,color:"#059669",display:"flex",alignItems:"center",gap:3}}>
+                        <Ico k="check" size={10} color="#059669"/> Concluir
+                      </button>
+                      <button onClick={()=>onDelete(apt.id)} style={{width:30,height:26,borderRadius:8,background:"rgba(220,38,38,0.08)",border:"1px solid rgba(220,38,38,0.18)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+                        <Ico k="trash" size={13} color="#dc2626"/>
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            }
+          </div>
+        </div>
+      </SW>
+      <Fab onClick={()=>setShowModal(true)} t={t}/>
+      {showModal&&<AddApptModal onClose={()=>setShowModal(false)} onAdd={onAdd} clients={clients} svcs={svcs} t={t}/>}
+      {completeApt&&<CompleteApptSheet apt={completeApt} svcs={svcs} clients={clients} onDone={(tx)=>{onComplete(completeApt,tx);setCompleteApt(null);}} onClose={()=>setCompleteApt(null)} t={t}/>}
+    </div>
+  );
+}
 
 function AddClientModal({onClose,onAdd,t}){const[form,setForm]=useState({name:"",phone:"",note:""});const[err,setErr]=useState({});const[saving,setSaving]=useState(false);const[ok,setOk]=useState(false);const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));const handle=async()=>{if(!form.name.trim()){setErr({name:"Nome obrigatorio"});return;}setSaving(true);await onAdd({name:form.name.trim(),phone:form.phone.trim(),note:form.note.trim(),avatar:ini(form.name),color:rc()});setOk(true);setSaving(false);setTimeout(onClose,800);};return <Sheet onClose={onClose} title="Novo Cliente" t={t} success={ok} successNode={<OK title="Cliente adicionado!" sub={form.name} t={t}/>}><div style={{display:"flex",flexDirection:"column",gap:14}}><div><Lbl t={t}>Nome *</Lbl><Inp value={form.name} onChange={upd("name")} placeholder="Nome completo" error={err.name} t={t}/></div><div><Lbl t={t}>Telefone (opcional)</Lbl><Inp value={form.phone} onChange={upd("phone")} placeholder="(11) 99999-9999" type="tel" t={t}/></div><div><Lbl t={t}>Observacoes</Lbl><Inp value={form.note} onChange={upd("note")} placeholder="Ex: alergia a produto..." rows={3} t={t}/></div><Btn onClick={handle} loading={saving} t={t}>Salvar Cliente</Btn></div></Sheet>;}
 
-function ClientDetail({client,txs,onClose,onDelete,t}){const clientTxs=txs.filter(x=>x.client_name===client.name&&x.type==="entrada");const total=clientTxs.reduce((s,x)=>s+pv(x.value),0);return <Sheet onClose={onClose} title={client.name} t={t}><div><div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}><div style={{width:56,height:56,borderRadius:16,background:client.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:700,color:"#fff"}}>{client.avatar||ini(client.name)}</div><div><p style={{fontWeight:700,fontSize:17,color:t.text}}>{client.name}</p>{client.phone&&<p style={{color:t.muted,fontSize:13}}>{client.phone}</p>}</div></div>{client.note&&<div style={{padding:"10px 14px",background:t.accentSoft,borderRadius:12,marginBottom:12}}><p style={{fontSize:13,color:t.sub,lineHeight:1.5}}>{client.note}</p></div>}<div style={{display:"flex",gap:10,marginBottom:16}}><Card t={t} style={{flex:1,textAlign:"center",padding:14}}><p style={{fontSize:11,color:t.muted,marginBottom:6}}>Total gasto</p><p style={{fontWeight:700,color:t.positive,fontSize:16}}>R$ {total.toFixed(2)}</p></Card><Card t={t} style={{flex:1,textAlign:"center",padding:14}}><p style={{fontSize:11,color:t.muted,marginBottom:6}}>Servicos</p><p style={{fontWeight:700,color:t.accent,fontSize:16}}>{clientTxs.length}</p></Card></div>{clientTxs.length>0&&<><p style={{fontSize:12,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:0.5,marginBottom:10}}>Historico de servicos</p>{clientTxs.map(x=><div key={x.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${t.divider}`}}><div><p style={{fontSize:14,fontWeight:600,color:t.text}}>{x.description}</p><p style={{fontSize:12,color:t.muted}}>{x.date}</p></div><p style={{fontWeight:700,color:t.positive,fontSize:14}}>+R$ {pv(x.value).toFixed(2)}</p></div>)}</>}<button onClick={()=>onDelete(client.id)} style={{width:"100%",marginTop:20,background:"none",border:`1px solid rgba(220,38,38,0.3)`,borderRadius:12,padding:"12px",color:t.negative,fontSize:14,cursor:"pointer",fontWeight:600}}>Excluir cliente</button></div></Sheet>;}
+function ClientDetail({client,txs,onClose,onDelete,t}){
+  const clientTxs=txs.filter(x=>x.client_name===client.name&&x.type==="entrada");
+  const total=clientTxs.reduce((s,x)=>s+pv(x.value),0);
+  return(
+    <Sheet onClose={onClose} title="" t={t}>
+      <div style={{textAlign:"center",marginBottom:20}}>
+        <div style={{width:72,height:72,borderRadius:22,background:client.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:700,color:"#fff",margin:"0 auto 12px",boxShadow:`0 6px 20px ${client.color||t.accent}55`}}>{client.avatar||ini(client.name)}</div>
+        <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700,color:t.text}}>{client.name}</h2>
+        {client.phone&&<p style={{color:t.muted,fontSize:13,marginTop:3}}>{client.phone}</p>}
+      </div>
+      {client.note&&<div style={{padding:"11px 15px",background:t.accentSoft,borderRadius:13,marginBottom:16,border:`1px solid ${t.inputBorder}`}}><p style={{fontSize:13,color:t.sub,lineHeight:1.55}}>{client.note}</p></div>}
+      <div style={{display:"flex",gap:10,marginBottom:20}}>
+        <Card t={t} style={{flex:1,textAlign:"center",padding:16}}>
+          <p style={{fontSize:10,color:t.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,marginBottom:6}}>Total gasto</p>
+          <p style={{fontWeight:700,color:t.positive,fontSize:18,fontFamily:"'Playfair Display',serif"}}>R$ {total.toFixed(2)}</p>
+        </Card>
+        <Card t={t} style={{flex:1,textAlign:"center",padding:16}}>
+          <p style={{fontSize:10,color:t.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,marginBottom:6}}>Servicos</p>
+          <p style={{fontWeight:700,color:t.accent,fontSize:18,fontFamily:"'Playfair Display',serif"}}>{clientTxs.length}</p>
+        </Card>
+      </div>
+      {clientTxs.length>0&&<>
+        <p style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:0.7,marginBottom:12}}>Historico</p>
+        {clientTxs.map(x=>(
+          <div key={x.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 0",borderBottom:`1px solid ${t.divider}`}}>
+            <div>
+              <p style={{fontSize:14,fontWeight:600,color:t.text}}>{x.description}</p>
+              <p style={{fontSize:12,color:t.muted,marginTop:2}}>{x.date}</p>
+            </div>
+            <p style={{fontWeight:700,color:t.positive,fontSize:14}}>+R$ {pv(x.value).toFixed(2)}</p>
+          </div>
+        ))}
+      </>}
+      <button onClick={()=>onDelete(client.id)} style={{width:"100%",marginTop:22,background:"none",border:`1px solid rgba(220,38,38,0.28)`,borderRadius:13,padding:"13px",color:t.negative,fontSize:14,cursor:"pointer",fontWeight:600}}>Excluir cliente</button>
+    </Sheet>
+  );
+}
 
-function ClientsScreen({clients,txs,onAdd,onDelete,t}){const[showAdd,setShowAdd]=useState(false);const[detail,setDetail]=useState(null);const[search,setSearch]=useState("");const filtered=clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase()));return <div style={{background:t.bg,minHeight:"100vh"}}><Blobs t={t}/><SW><div style={{position:"relative",zIndex:1,padding:"52px 20px 20px"}}><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:t.text,marginBottom:16,animation:"fadeUp 0.4s ease"}}>Clientes</h1><div style={{marginBottom:16}}><Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar cliente..." t={t}/></div>{filtered.length===0?<Card t={t} style={{textAlign:"center",padding:40}}><Ico k="user" size={36} color={t.muted} style={{margin:"0 auto 12px",display:"block"}}/><p style={{color:t.muted,fontSize:14,lineHeight:1.6}}>{search?"Nenhum cliente encontrado.":"Nenhum cliente ainda.\nToque em + para adicionar."}</p></Card>:filtered.map((c,i)=><Card key={c.id} t={t} onClick={()=>setDetail(c)} style={{marginBottom:10,padding:"13px 15px",animation:`slideR 0.3s ease ${i*50}ms both`}}><div style={{display:"flex",alignItems:"center",gap:12}}><div style={{width:44,height:44,borderRadius:13,background:c.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff"}}>{c.avatar||ini(c.name)}</div><div style={{flex:1}}><p style={{fontWeight:600,fontSize:15,color:t.text}}>{c.name}</p>{c.phone&&<p style={{color:t.muted,fontSize:12}}>{c.phone}</p>}{c.note&&<p style={{color:t.muted,fontSize:11,marginTop:2}}>{c.note.slice(0,40)}{c.note.length>40?"...":""}</p>}</div><Ico k="chev" size={16} color={t.muted} style={{transform:"rotate(-90deg)"}}/></div></Card>)}</div></SW><Fab onClick={()=>setShowAdd(true)} t={t}/>{showAdd&&<AddClientModal onClose={()=>setShowAdd(false)} onAdd={onAdd} t={t}/>}{detail&&<ClientDetail client={detail} txs={txs} onClose={()=>setDetail(null)} onDelete={id=>{onDelete(id);setDetail(null);}} t={t}/>}</div>;}
+function ClientsScreen({clients,txs,onAdd,onDelete,t}){
+  const[showAdd,setShowAdd]=useState(false);const[detail,setDetail]=useState(null);const[search,setSearch]=useState("");
+  const filtered=clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase()));
+  return(
+    <div style={{background:t.bg,minHeight:"100vh"}}>
+      <Blobs t={t}/>
+      <SW>
+        <div style={{position:"relative",zIndex:1}}>
+          <SectionHero title="Clientes" sub={`${clients.length} cadastrada${clients.length!==1?"s":""}`} emoji="👩" t={t}/>
+          <div style={{padding:"0 18px"}}>
+            <div style={{marginBottom:16}}><Inp value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar cliente..." t={t}/></div>
+            {filtered.length===0
+              ?<Card t={t} style={{textAlign:"center",padding:44,border:`1.5px dashed ${t.inputBorder}`}}>
+                <p style={{fontSize:32,marginBottom:10}}>👩</p>
+                <p style={{color:t.muted,fontSize:14}}>{search?"Nenhuma cliente encontrada.":"Nenhuma cliente ainda.
+Toque em + para adicionar."}</p>
+              </Card>
+              :filtered.map((c,i)=>(
+                <Card key={c.id} t={t} onClick={()=>setDetail(c)} style={{marginBottom:10,padding:"14px 16px",animation:`slideR 0.3s ease ${i*45}ms both`,cursor:"pointer"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:13}}>
+                    <div style={{width:48,height:48,borderRadius:15,background:c.color||t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:700,color:"#fff",flexShrink:0,boxShadow:`0 4px 12px ${c.color||t.accent}44`}}>{c.avatar||ini(c.name)}</div>
+                    <div style={{flex:1}}>
+                      <p style={{fontWeight:700,fontSize:15,color:t.text}}>{c.name}</p>
+                      {c.phone&&<p style={{color:t.muted,fontSize:12,marginTop:2}}>{c.phone}</p>}
+                      {c.note&&<p style={{color:t.muted,fontSize:11,marginTop:2}}>{c.note.slice(0,40)}{c.note.length>40?"...":""}</p>}
+                    </div>
+                    <Ico k="chev" size={16} color={t.muted} style={{transform:"rotate(-90deg)",flexShrink:0}}/>
+                  </div>
+                </Card>
+              ))
+            }
+          </div>
+        </div>
+      </SW>
+      <Fab onClick={()=>setShowAdd(true)} t={t}/>
+      {showAdd&&<AddClientModal onClose={()=>setShowAdd(false)} onAdd={onAdd} t={t}/>}
+      {detail&&<ClientDetail client={detail} txs={txs} onClose={()=>setDetail(null)} onDelete={id=>{onDelete(id);setDetail(null);}} t={t}/>}
+    </div>
+  );
+}
 
 function LineChart({txs,t}){const W=320,H=110,P=12;if(!txs.length)return <div style={{height:H,display:"flex",alignItems:"center",justifyContent:"center"}}><p style={{color:t.muted,fontSize:12}}>Adicione lancamentos para ver o grafico.</p></div>;const sorted=[...txs].sort((a,b)=>a.date.split("/").reverse().join("").localeCompare(b.date.split("/").reverse().join("")));let bal=0;const pts=[{v:0}];sorted.forEach(x=>{bal+=x.type==="entrada"?pv(x.value):-pv(x.value);pts.push({v:bal});});const vals=pts.map(p=>p.v);const minV=Math.min(0,...vals),maxV=Math.max(0,...vals);const range=maxV-minV||1;const sx=i=>P+(i/(pts.length-1||1))*(W-P*2);const sy=v=>H-P-((v-minV)/range)*(H-P*2);const path=pts.map((p,i)=>`${i===0?"M":"L"}${sx(i).toFixed(1)},${sy(p.v).toFixed(1)}`).join(" ");const area=`${path} L${sx(pts.length-1)},${H-P} L${sx(0)},${H-P} Z`;const zero=sy(0);const last=vals[vals.length-1];return <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible"}}><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={t.accent} stopOpacity="0.25"/><stop offset="100%" stopColor={t.accent} stopOpacity="0.02"/></linearGradient></defs><line x1={P} y1={zero} x2={W-P} y2={zero} stroke={t.divider} strokeWidth="1" strokeDasharray="4,4"/><path d={area} fill="url(#lg)"/><path d={path} fill="none" stroke={t.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx={sx(pts.length-1)} cy={sy(last)} r="4" fill={t.accent}/><text x={W-P} y={sy(last)-8} textAnchor="end" fontSize="10" fill={t.accent} fontWeight="700">R$ {last.toFixed(0)}</text></svg>;}
 
 function AddTxModal({onClose,onAdd,clients,svcs,t}){const[type,setType]=useState("entrada");const[form,setForm]=useState({desc:"",value:"",date:TS,payment:"",clientName:""});const[err,setErr]=useState({});const[saving,setSaving]=useState(false);const[ok,setOk]=useState(false);const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));const handle=async()=>{const e={};if(!form.desc.trim())e.desc="Descricao obrigatoria";if(!form.value||pv(form.value)<=0)e.value="Valor invalido";if(type==="entrada"&&!form.payment)e.payment="Selecione o pagamento";if(Object.keys(e).length){setErr(e);return;}setSaving(true);await onAdd({type,description:form.desc.trim(),value:pv(form.value),date:form.date,payment:form.payment||null,client_name:form.clientName||null,category:type==="saida"?form.desc:null});setOk(true);setSaving(false);setTimeout(onClose,800);};return <Sheet onClose={onClose} title={type==="entrada"?"Nova Entrada":"Nova Despesa"} t={t} success={ok} successNode={<OK title={type==="entrada"?"Entrada registrada!":"Despesa registrada!"} sub={`R$ ${form.value}`} t={t}/>}><div style={{display:"flex",borderRadius:12,background:t.divider,padding:3,marginBottom:18}}>{["entrada","saida"].map(tp=><button key={tp} onClick={()=>setType(tp)} style={{flex:1,padding:"9px",borderRadius:10,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:type===tp?t.grad:"transparent",color:type===tp?"#fff":t.sub,transition:"all 0.2s"}}>{tp==="entrada"?"Entrada":"Despesa"}</button>)}</div><div style={{display:"flex",flexDirection:"column",gap:14}}><div><Lbl t={t}>{type==="entrada"?"Servico *":"Descricao *"}</Lbl>{type==="entrada"?<select value={form.desc} onChange={upd("desc")} style={{width:"100%",borderRadius:13,padding:"12px 14px",fontSize:15,color:t.text,background:t.inputBg,border:`1.5px solid ${err.desc?"#dc2626":t.inputBorder}`,outline:"none",appearance:"none"}}><option value="">Selecione o servico...</option>{svcs.map(s=><option key={s} value={s}>{s}</option>)}<option value="Outro">Outro...</option></select>:<Inp value={form.desc} onChange={upd("desc")} placeholder="Ex: Aluguel do mes" error={err.desc} t={t}/>}{err.desc&&type==="entrada"&&<p style={{color:"#dc2626",fontSize:12,marginTop:4}}>{err.desc}</p>}</div>{type==="entrada"&&<div><Lbl t={t}>Cliente (opcional)</Lbl><select value={form.clientName} onChange={upd("clientName")} style={{width:"100%",borderRadius:13,padding:"12px 14px",fontSize:15,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none",appearance:"none"}}><option value="">Selecionar cliente...</option>{clients.map(c=><option key={c.id} value={c.name}>{c.name}</option>)}</select></div>}<div><Lbl t={t}>Valor (R$) *</Lbl><Inp value={form.value} onChange={upd("value")} placeholder="0,00" type="number" error={err.value} t={t}/></div><div><Lbl t={t}>Data</Lbl><input type="date" value={form.date.split("/").reverse().join("-")} onChange={e=>{const[y,m,d]=e.target.value.split("-");setForm(p=>({...p,date:`${d}/${m}/${y}`}));}} style={{width:"100%",borderRadius:13,padding:"12px 11px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/></div>{type==="entrada"&&<div><Lbl t={t}>Forma de pagamento *</Lbl><div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8,width:"100%"}}>{PM.map(pm=>{const on=form.payment===pm.id;return <button key={pm.id} onClick={()=>setForm(p=>({...p,payment:on?"":pm.id}))} style={{border:`${on?"2px":"1.5px"} solid ${on?pm.c:t.divider}`,borderRadius:13,padding:"11px",background:on?pm.bg:t.inputBg,cursor:"pointer",fontSize:13,fontWeight:on?700:500,color:on?pm.c:t.sub,transition:"all 0.18s"}}>{pm.lb}</button>;})}</div>{err.payment&&<p style={{color:"#dc2626",fontSize:12,marginTop:4}}>{err.payment}</p>}</div>}<Btn onClick={handle} loading={saving} t={t}>{type==="entrada"?"Registrar Entrada":"Registrar Despesa"}</Btn></div></Sheet>;}
 
-function FinanceScreen({txs,clients,svcs,onAdd,onDelete,t}){const[showAdd,setShowAdd]=useState(false);const[tab,setTab]=useState("entradas");const entradas=txs.filter(x=>x.type==="entrada");const despesas=txs.filter(x=>x.type==="saida");const totalE=entradas.reduce((s,x)=>s+pv(x.value),0);const totalD=despesas.reduce((s,x)=>s+pv(x.value),0);const lista=(tab==="entradas"?[...entradas]:[...despesas]).reverse();return <div style={{background:t.bg,minHeight:"100vh"}}><Blobs t={t}/><SW><div style={{position:"relative",zIndex:1,padding:"52px 20px 20px"}}><h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:t.text,marginBottom:16,animation:"fadeUp 0.4s ease"}}>Financas</h1><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:18}}>{[{lb:"Entradas",v:totalE,c:t.positive},{lb:"Despesas",v:totalD,c:t.negative},{lb:"Lucro",v:totalE-totalD,c:(totalE-totalD)>=0?t.positive:t.negative}].map(s=><Card key={s.lb} t={t} style={{padding:12,textAlign:"center"}}><p style={{fontSize:10,color:t.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:0.4,marginBottom:6}}>{s.lb}</p><p style={{fontSize:13,fontWeight:700,color:s.c}}>R$ {s.v.toFixed(0)}</p></Card>)}</div><Card t={t} style={{marginBottom:18,padding:"16px 12px"}}><p style={{fontSize:11,color:t.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,marginBottom:10}}>Saldo acumulado</p><LineChart txs={txs} t={t}/></Card><div style={{display:"flex",borderRadius:12,background:t.divider,padding:3,marginBottom:16}}>{[["entradas","Entradas"],["despesas","Despesas"]].map(([id,lb])=><button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:"9px",borderRadius:10,border:"none",cursor:"pointer",fontSize:13,fontWeight:600,background:tab===id?t.grad:"transparent",color:tab===id?"#fff":t.sub,transition:"all 0.2s"}}>{lb}</button>)}</div>{lista.length===0?<Card t={t} style={{textAlign:"center",padding:32}}><p style={{color:t.muted,fontSize:14}}>Nenhum registro ainda.</p></Card>:lista.map((x,i)=><Card key={x.id} t={t} style={{marginBottom:10,padding:"12px 14px",animation:`slideR 0.3s ease ${i*40}ms both`}}><div style={{display:"flex",alignItems:"flex-start",gap:10}}><div style={{width:36,height:36,borderRadius:10,background:x.type==="entrada"?"rgba(5,150,105,0.1)":"rgba(220,38,38,0.1)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico k={x.type==="entrada"?"up":"dn"} size={16} color={x.type==="entrada"?t.positive:t.negative}/></div><div style={{flex:1}}><p style={{fontWeight:600,fontSize:14,color:t.text}}>{x.description}</p>{x.client_name&&<p style={{fontSize:11,color:t.accent,marginTop:1}}>Cliente: {x.client_name}</p>}<div style={{display:"flex",alignItems:"center",gap:8,marginTop:3}}><p style={{fontSize:11,color:t.muted}}>{x.date}</p>{x.payment&&<span style={{fontSize:10,padding:"2px 7px",borderRadius:6,background:t.accentSoft,color:t.accent,fontWeight:600}}>{x.payment}</span>}</div></div><div style={{textAlign:"right"}}><p style={{fontWeight:700,color:x.type==="entrada"?t.positive:t.negative,fontSize:14}}>{x.type==="entrada"?"+":"-"}R$ {pv(x.value).toFixed(2)}</p><button onClick={()=>onDelete(x.id)} style={{background:"none",border:"none",cursor:"pointer",marginTop:4}}><Ico k="trash" size={13} color={t.muted}/></button></div></div></Card>)}</div></SW><Fab onClick={()=>setShowAdd(true)} t={t}/>{showAdd&&<AddTxModal onClose={()=>setShowAdd(false)} onAdd={onAdd} clients={clients} svcs={svcs} t={t}/>}</div>;}
+function FinanceScreen({txs,clients,svcs,onAdd,onDelete,t}){
+  const[showAdd,setShowAdd]=useState(false);const[tab,setTab]=useState("entradas");
+  const entradas=txs.filter(x=>x.type==="entrada");
+  const despesas=txs.filter(x=>x.type==="saida");
+  const totalE=entradas.reduce((s,x)=>s+pv(x.value),0);
+  const totalD=despesas.reduce((s,x)=>s+pv(x.value),0);
+  const lista=(tab==="entradas"?[...entradas]:[...despesas]).reverse();
+  return(
+    <div style={{background:t.bg,minHeight:"100vh"}}>
+      <Blobs t={t}/>
+      <SW>
+        <div style={{position:"relative",zIndex:1}}>
+          <div style={{background:t.grad,padding:"52px 22px 24px",borderRadius:"0 0 32px 32px",marginBottom:20,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(109,40,217,0.28)"}}>
+            <div style={{position:"absolute",top:-40,right:-40,width:160,height:160,borderRadius:"50%",background:"rgba(255,255,255,0.07)"}}/>
+            <p style={{color:"rgba(255,255,255,0.65)",fontSize:12,marginBottom:8,position:"relative",zIndex:1}}>💰 Finanças</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,position:"relative",zIndex:1}}>
+              {[{lb:"Entradas",v:totalE,c:"#fff"},{lb:"Despesas",v:totalD,c:"#ffb3b3"},{lb:"Lucro",v:totalE-totalD,c:(totalE-totalD)>=0?"#a7f3d0":"#ffb3b3"}].map(s=>(
+                <div key={s.lb} style={{background:"rgba(255,255,255,0.12)",borderRadius:14,padding:"12px 10px",border:"1px solid rgba(255,255,255,0.18)"}}>
+                  <p style={{fontSize:10,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:0.5,marginBottom:4}}>{s.lb}</p>
+                  <p style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:700,color:s.c}}>R$ {s.v.toFixed(0)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{padding:"0 18px"}}>
+            <Card t={t} style={{marginBottom:18,padding:"16px 14px"}}>
+              <p style={{fontSize:11,color:t.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:0.7,marginBottom:12}}>Saldo acumulado</p>
+              <LineChart txs={txs} t={t}/>
+            </Card>
+            <div style={{display:"flex",borderRadius:14,background:t.divider,padding:4,marginBottom:18}}>
+              {[["entradas","💰 Entradas"],["despesas","📉 Despesas"]].map(([id,lb])=>(
+                <button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:"10px",borderRadius:11,border:"none",cursor:"pointer",fontSize:13,fontWeight:700,background:tab===id?t.grad:"transparent",color:tab===id?"#fff":t.sub,transition:"all 0.2s"}}>{lb}</button>
+              ))}
+            </div>
+            {lista.length===0
+              ?<Card t={t} style={{textAlign:"center",padding:36,border:`1.5px dashed ${t.inputBorder}`}}>
+                <p style={{fontSize:30,marginBottom:10}}>{tab==="entradas"?"💰":"📉"}</p>
+                <p style={{color:t.muted,fontSize:14}}>Nenhum registro ainda.</p>
+              </Card>
+              :lista.map((x,i)=>(
+                <Card key={x.id} t={t} style={{marginBottom:10,padding:"13px 16px",animation:`slideR 0.3s ease ${i*35}ms both`}}>
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <div style={{width:40,height:40,borderRadius:12,background:x.type==="entrada"?"rgba(5,150,105,0.1)":"rgba(220,38,38,0.1)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                      <Ico k={x.type==="entrada"?"up":"dn"} size={17} color={x.type==="entrada"?t.positive:t.negative}/>
+                    </div>
+                    <div style={{flex:1}}>
+                      <p style={{fontWeight:700,fontSize:14,color:t.text}}>{x.description}</p>
+                      {x.client_name&&<p style={{fontSize:11,color:t.accent,marginTop:1}}>👩 {x.client_name}</p>}
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginTop:3}}>
+                        <p style={{fontSize:11,color:t.muted}}>{x.date}</p>
+                        {x.payment&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:7,background:t.accentSoft,color:t.accent,fontWeight:700}}>{x.payment}</span>}
+                      </div>
+                    </div>
+                    <div style={{textAlign:"right",flexShrink:0}}>
+                      <p style={{fontWeight:700,color:x.type==="entrada"?t.positive:t.negative,fontSize:15}}>{x.type==="entrada"?"+":"-"}R$ {pv(x.value).toFixed(2)}</p>
+                      <button onClick={()=>onDelete(x.id)} style={{background:"none",border:"none",cursor:"pointer",marginTop:4,display:"flex",justifyContent:"flex-end"}}>
+                        <Ico k="trash" size={13} color={t.muted}/>
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            }
+          </div>
+        </div>
+      </SW>
+      <Fab onClick={()=>setShowAdd(true)} t={t}/>
+      {showAdd&&<AddTxModal onClose={()=>setShowAdd(false)} onAdd={onAdd} clients={clients} svcs={svcs} t={t}/>}
+    </div>
+  );
+}
 
 function ServicesPanel({svcs,onSave,t}){const[list,setList]=useState(svcs);const[newSvc,setNewSvc]=useState("");const[saved,setSaved]=useState(false);const add=()=>{const v=newSvc.trim();if(!v||list.includes(v))return;setList(l=>[...l,v]);setNewSvc("");};const remove=s=>setList(l=>l.filter(x=>x!==s));const addSug=s=>{if(!list.includes(s))setList(l=>[...l,s]);};const save=async()=>{await onSave(list);setSaved(true);setTimeout(()=>setSaved(false),2000);};const sugs=DEF_SVCS.filter(s=>!list.includes(s));return <div style={{animation:"fadeUp 0.3s ease"}}><p style={{fontSize:13,color:t.muted,marginBottom:16,lineHeight:1.6}}>Personalize os servicos que voce oferece. Eles aparecem na Agenda e em Financas.</p>{list.length>0&&<div style={{marginBottom:18}}><Lbl t={t}>Meus servicos</Lbl><div style={{display:"flex",flexWrap:"wrap",gap:8}}>{list.map(s=><div key={s} style={{display:"flex",alignItems:"center",gap:6,padding:"7px 12px",background:t.accentSoft,border:`1px solid ${t.inputBorder}`,borderRadius:20,fontSize:13,color:t.accent,fontWeight:500}}>{s}<button onClick={()=>remove(s)} style={{background:"none",border:"none",cursor:"pointer",padding:0,display:"flex",lineHeight:0}}><Ico k="x" size={12} color={t.accent}/></button></div>)}</div></div>}<div style={{marginBottom:18}}><Lbl t={t}>Adicionar servico</Lbl><div style={{display:"flex",gap:8}}><input value={newSvc} onChange={e=>setNewSvc(e.target.value)} onKeyDown={e=>e.key==="Enter"&&add()} placeholder="Nome do servico..." style={{flex:1,borderRadius:13,padding:"12px 14px",fontSize:14,color:t.text,background:t.inputBg,border:`1.5px solid ${t.inputBorder}`,outline:"none"}}/><button onClick={add} style={{padding:"0 16px",borderRadius:12,background:t.grad,border:"none",cursor:"pointer",color:"#fff",fontSize:14,fontWeight:600,flexShrink:0}}>+ Add</button></div></div>{sugs.length>0&&<div style={{marginBottom:20}}><Lbl t={t}>Sugestoes rapidas — toque para adicionar</Lbl><div style={{display:"flex",flexWrap:"wrap",gap:8}}>{sugs.map(s=><button key={s} onClick={()=>addSug(s)} style={{padding:"7px 12px",background:t.cardDeep,border:`1px solid ${t.border}`,borderRadius:20,fontSize:12,color:t.sub,cursor:"pointer",fontWeight:500}}>+ {s}</button>)}</div></div>}<Btn onClick={save} variant={saved?"green":"primary"} t={t}>{saved?<><Ico k="check" size={16} color={t.positive}/> Salvo!</>:"Salvar servicos"}</Btn></div>;}
 
@@ -442,56 +663,71 @@ function SettingsScreen({profile,session,svcs,onSaveSvcs,onPaid,onSignOut,onThem
   const uEmail=session?.user?.email||"";
   const trial=trialInfo(profile);
   const PANELS=[
-    {id:"servicos",lb:"Meus Servicos",emoji:"✂️",sub:"Personalize os servicos oferecidos"},
-    {id:"planos",lb:"Planos e Assinatura",emoji:"💳",sub:trial.paid?"Assinatura ativa":trial.expired?"Teste expirado":`${trial.daysLeft}d ${trial.hoursLeft}h restantes`},
-    {id:"seguranca",lb:"Alterar Senha",emoji:"🔒",sub:"Mude sua senha de acesso"},
-    {id:"tutorial",lb:"Ver Tutorial Novamente",emoji:"▶️",sub:"Refazer o tutorial interativo do app"},
-    {id:"ajuda",lb:"Central de Ajuda",emoji:"❓",sub:"Como usar cada parte do app"},
-    {id:"suporte",lb:"Suporte WhatsApp",emoji:"💬",sub:"Fale conosco diretamente"},
+    {id:"servicos",lb:"Meus Servicos",icon:"✂️",sub:"Personalize os servicos oferecidos",color:"#7c3aed"},
+    {id:"planos",lb:"Planos e Assinatura",icon:"💳",sub:trial.paid?"Assinatura ativa":trial.expired?"Teste expirado":`${trial.daysLeft}d ${trial.hoursLeft}h restantes`,color:"#db2777"},
+    {id:"seguranca",lb:"Alterar Senha",icon:"🔒",sub:"Mude sua senha de acesso",color:"#2563eb"},
+    {id:"tutorial",lb:"Ver Tutorial",icon:"▶️",sub:"Rever o tutorial interativo",color:"#059669"},
+    {id:"ajuda",lb:"Central de Ajuda",icon:"❓",sub:"Como usar cada parte do app",color:"#0891b2"},
+    {id:"suporte",lb:"Suporte WhatsApp",icon:"💬",sub:"Fale conosco diretamente",color:"#25d366"},
   ];
   if(panel==="ajuda") return <HelpScreen t={t} onBack={()=>setPanel(null)}/>;
-  if(panel&&panel!=="tutorial") return(
-    <div style={{background:t.bg,minHeight:"100vh"}}>
-      <Blobs t={t}/>
-      <div style={{position:"relative",zIndex:1,padding:"52px 20px 20px",maxWidth:430,margin:"0 auto"}}>
-        <button onClick={()=>setPanel(null)} style={{background:"none",border:"none",cursor:"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,marginBottom:24,fontSize:14}}><Ico k="back" size={18} color={t.sub}/> Voltar</button>
-        <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,color:t.text,marginBottom:20}}>{PANELS.find(p=>p.id===panel)?.lb}</h2>
-        {panel==="servicos"&&<ServicesPanel svcs={svcs} onSave={onSaveSvcs} t={t}/>}
-        {panel==="planos"&&<PlansPanel profile={profile} onPaid={onPaid} session={session} t={t}/>}
-        {panel==="seguranca"&&<SecurityPanel session={session} t={t}/>}
-        {panel==="suporte"&&<SupportPanel t={t}/>}
+  if(panel&&panel!=="tutorial"){
+    return(
+      <div style={{background:t.bg,minHeight:"100vh"}}>
+        <Blobs t={t}/>
+        <div style={{position:"relative",zIndex:1,padding:"52px 20px 20px",maxWidth:430,margin:"0 auto"}}>
+          <button onClick={()=>setPanel(null)} style={{background:"none",border:"none",cursor:"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,marginBottom:24,fontSize:14,fontWeight:600}}>
+            <Ico k="back" size={18} color={t.sub}/> Voltar
+          </button>
+          <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,color:t.text,marginBottom:20}}>{PANELS.find(p=>p.id===panel)?.lb}</h2>
+          {panel==="servicos"&&<ServicesPanel svcs={svcs} onSave={onSaveSvcs} t={t}/>}
+          {panel==="planos"&&<PlansPanel profile={profile} onPaid={onPaid} session={session} t={t}/>}
+          {panel==="seguranca"&&<SecurityPanel session={session} t={t}/>}
+          {panel==="suporte"&&<SupportPanel t={t}/>}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
   return(
     <div style={{background:t.bg,minHeight:"100vh"}}>
       <Blobs t={t}/>
       <SW>
-        <div style={{position:"relative",zIndex:1,padding:"52px 20px 20px"}}>
-          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:24,fontWeight:700,color:t.text,marginBottom:20,animation:"fadeUp 0.4s ease"}}>Configuracoes</h1>
-          <Card t={t} style={{marginBottom:20,padding:16,animation:"fadeUp 0.4s ease 0.1s both"}}>
-            <div style={{display:"flex",alignItems:"center",gap:14}}>
-              <div style={{width:48,height:48,borderRadius:14,background:t.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff"}}>{uEmail.slice(0,2).toUpperCase()}</div>
-              <div style={{flex:1}}><p style={{fontWeight:700,fontSize:15,color:t.text}}>{uEmail.split("@")[0]}</p><p style={{fontSize:12,color:t.muted}}>{uEmail}</p></div>
-            </div>
-          </Card>
-          {PANELS.map((p,i)=>(
-            <Card key={p.id} t={t} onClick={()=>{if(p.id==="tutorial"){startTour();}else setPanel(p.id);}} style={{marginBottom:10,padding:"14px 16px",animation:`slideR 0.3s ease ${i*50}ms both`}}>
+        <div style={{position:"relative",zIndex:1}}>
+          <SectionHero title="Configuracoes" sub="Personalize seu app" emoji="⚙️" t={t}/>
+          <div style={{padding:"0 18px"}}>
+            <Card t={t} style={{marginBottom:18,padding:16}}>
               <div style={{display:"flex",alignItems:"center",gap:14}}>
-                <div style={{width:40,height:40,borderRadius:12,background:p.id==="ajuda"?"rgba(37,99,235,0.1)":t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>{p.emoji}</div>
-                <div style={{flex:1}}><p style={{fontWeight:600,fontSize:14,color:t.text}}>{p.lb}</p><p style={{fontSize:12,color:t.muted,marginTop:2}}>{p.sub}</p></div>
-                <Ico k="chev" size={16} color={t.muted} style={{transform:"rotate(-90deg)"}}/>
+                <div style={{width:52,height:52,borderRadius:16,background:t.grad,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:700,color:"#fff",boxShadow:"0 4px 14px rgba(109,40,217,0.35)"}}>{uEmail.slice(0,2).toUpperCase()}</div>
+                <div style={{flex:1}}>
+                  <p style={{fontWeight:700,fontSize:15,color:t.text}}>{uEmail.split("@")[0]}</p>
+                  <p style={{fontSize:12,color:t.muted}}>{uEmail}</p>
+                </div>
               </div>
             </Card>
-          ))}
-          <Card t={t} style={{marginTop:10,marginBottom:10,padding:"14px 16px"}}>
-            <div style={{display:"flex",alignItems:"center",gap:14}}>
-              <div style={{width:40,height:40,borderRadius:12,background:t.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🌙</div>
-              <div style={{flex:1}}><p style={{fontWeight:600,fontSize:14,color:t.text}}>Tema escuro</p><p style={{fontSize:12,color:t.muted}}>Alternar aparencia</p></div>
-              <Toggle on={isDark} onChange={onThemeToggle}/>
-            </div>
-          </Card>
-          <Btn onClick={onSignOut} variant="danger" t={t} style={{marginTop:16}}><Ico k="x" size={16} color={t.negative}/> Sair da conta</Btn>
+            {PANELS.map((p,i)=>(
+              <Card key={p.id} t={t} onClick={()=>{if(p.id==="tutorial"){startTour();}else setPanel(p.id);}} style={{marginBottom:10,padding:"15px 16px",animation:`slideR 0.3s ease ${i*45}ms both`,cursor:"pointer"}}>
+                <div style={{display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:44,height:44,borderRadius:13,background:`${p.color}14`,border:`1.5px solid ${p.color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:21,flexShrink:0}}>{p.icon}</div>
+                  <div style={{flex:1}}>
+                    <p style={{fontWeight:700,fontSize:14,color:t.text}}>{p.lb}</p>
+                    <p style={{fontSize:12,color:t.muted,marginTop:2}}>{p.sub}</p>
+                  </div>
+                  <Ico k="chev" size={16} color={t.muted} style={{transform:"rotate(-90deg)",flexShrink:0}}/>
+                </div>
+              </Card>
+            ))}
+            <Card t={t} style={{marginTop:10,marginBottom:16,padding:"15px 16px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:14}}>
+                <div style={{width:44,height:44,borderRadius:13,background:"rgba(109,40,217,0.1)",border:"1.5px solid rgba(109,40,217,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:21}}>🌙</div>
+                <div style={{flex:1}}>
+                  <p style={{fontWeight:700,fontSize:14,color:t.text}}>Tema escuro</p>
+                  <p style={{fontSize:12,color:t.muted}}>Alternar aparencia</p>
+                </div>
+                <Toggle on={isDark} onChange={onThemeToggle}/>
+              </div>
+            </Card>
+            <Btn onClick={onSignOut} variant="danger" t={t}><Ico k="x" size={16} color={t.negative}/> Sair da conta</Btn>
+          </div>
         </div>
       </SW>
     </div>
